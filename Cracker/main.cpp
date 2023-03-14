@@ -67,7 +67,7 @@ int main()
     hacker_image.loadFromFile("./images/mem.jpeg");
 
     Image glasses_image;
-    glasses_image.loadFromFile("./images/glasses1.png");
+    glasses_image.loadFromFile("./images/glasses.png");
 
     Texture background_texture;
     background_texture.loadFromImage(background_image);
