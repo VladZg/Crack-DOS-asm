@@ -1,12 +1,16 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <time.h>
+#include <cassert>
 
 using namespace sf;
 
 Sprite LoadBackgroundImage(Window window, char* filename, Sprite* sprite);
-int num = 0;
+int CrackProgramm(const char* filename);
+
 int loading_progress = 0;
+int glasses_y_position = 0;
+int glasses_final_position = 215;
 
 int main()
 {
@@ -39,7 +43,7 @@ int main()
     cracked_title_text.setCharacterSize(28);
     cracked_title_text.setFillColor(Color::Magenta);
     cracked_title_text.setStyle(Text::Bold);
-    cracked_title_text.setPosition(130, 70);
+    cracked_title_text.setPosition(130, 85);
 
     Music loading_music;
     loading_music.openFromFile("./audio/loading.wav");
@@ -60,7 +64,10 @@ int main()
     cracked_image.loadFromFile("./images/cracked.jpeg");
 
     Image hacker_image;
-    hacker_image.loadFromFile("./images/hacker.jpeg");
+    hacker_image.loadFromFile("./images/mem.jpeg");
+
+    Image glasses_image;
+    glasses_image.loadFromFile("./images/glasses1.png");
 
     Texture background_texture;
     background_texture.loadFromImage(background_image);
@@ -76,6 +83,9 @@ int main()
 
     Texture hacker_texture;
     hacker_texture.loadFromImage(hacker_image);
+
+    Texture glasses_texture;
+    glasses_texture.loadFromImage(glasses_image);
 
     Sprite background_sprite;
     background_sprite.setTexture(background_texture);
@@ -97,9 +107,14 @@ int main()
     hacker_sprite.setTexture(hacker_texture);
     hacker_sprite.setPosition(105, 0);
 
+    Sprite glasses_sprite;
+    glasses_sprite.setTexture(glasses_texture);
+    glasses_sprite.setPosition(125, glasses_y_position);
+
     Vector2f background_targetSize(540.0f, 480.0f);
     Vector2f boom_targetSize(40.0f, 60.0f);
     Vector2f hacker_targetSize(350.0f, 180.0f);
+    Vector2f glasses_targetSize(220.0f, 130.0f);
 
     background_sprite.setScale( background_targetSize.x / background_sprite.getLocalBounds().width,
                                 background_targetSize.y / background_sprite.getLocalBounds().height);
@@ -115,6 +130,9 @@ int main()
 
     hacker_sprite.setScale( hacker_targetSize.x / hacker_sprite.getLocalBounds().width,
                             hacker_targetSize.y / hacker_sprite.getLocalBounds().height);
+
+    glasses_sprite.setScale( glasses_targetSize.x / glasses_sprite.getLocalBounds().width,
+                             glasses_targetSize.y / glasses_sprite.getLocalBounds().height);
 
     // background_sprite.setColor(Color(255, 255, 255, 127));
     bin_sprite.setColor(Color(255, 255, 255, 75));
@@ -139,7 +157,7 @@ int main()
             vzlom_progress_text.setString(loading_progress_str);
             window.draw(vzlom_progress_text);
 
-            sleep(milliseconds(155));
+            sleep(milliseconds(155)); //155
         }
 
         if (loading_progress > 100)
@@ -147,6 +165,7 @@ int main()
             window.draw(cracked_sprite);
             window.draw(hacker_sprite);
             window.draw(cracked_title_text);
+            window.draw(glasses_sprite);
         }
 
         Event event;
@@ -159,9 +178,12 @@ int main()
                 break;
 
             case Event::KeyPressed:
-                if (event.key.code == Keyboard::Enter)
+                if (event.key.code == Keyboard::Enter && loading_progress <= 100)
+                {
+                    CrackProgramm("./Hack.com");
                     is_boom = ~is_boom;
                     is_boom ? loading_music.play() : loading_music.stop();
+                }
                 break;
 
 //             case Event::KeyReleased:
@@ -179,12 +201,38 @@ int main()
             loading_music.stop();
             cracked_music.play();
 
-            loading_progress++;
             sleep(milliseconds(1500));
+            loading_progress++;
+        }
+
+        else if (loading_progress == 102)
+        {
+            while (glasses_y_position <= glasses_final_position)
+            {
+                window.clear();
+                window.draw(cracked_sprite);
+                glasses_sprite.setPosition(125, glasses_y_position++);
+                window.draw(glasses_sprite);
+                window.display();
+                sleep(milliseconds(15));
+            }
+
+            loading_progress++;
         }
 
         window.display();
     }
 
     return 0;
+}
+
+int CrackProgramm(const char* filename)
+{
+    assert(filename != nullptr);
+    FILE* file = fopen(filename, "w+");
+    assert(file != nullptr);
+
+    fprintf(stdout, "CRACKED!\n");
+
+    return 1;
 }

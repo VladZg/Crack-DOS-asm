@@ -9,5 +9,5 @@ link:
 run:
 	./sfml-app
 
-clean:
+clear:
 	rm -f main.o
