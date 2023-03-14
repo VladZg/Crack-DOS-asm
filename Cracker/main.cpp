@@ -6,13 +6,46 @@ using namespace sf;
 
 Sprite LoadBackgroundImage(Window window, char* filename, Sprite* sprite);
 int num = 0;
+int loading_progress = 0;
 
 int main()
 {
     RenderWindow window(sf::VideoMode(540, 480), "AbObA TiMaSoK Cracker! (He-He)");
 
-    Music music;
-    music.openFromFile("./audio/audio1.wav");
+    Font font;
+    font.loadFromFile("./fonts/modern.ttf");
+
+    Text vzlom_title_text;
+    vzlom_title_text.setFont(font);
+    vzlom_title_text.setString("vzlom started ...");
+    vzlom_title_text.setCharacterSize(28);
+    vzlom_title_text.setFillColor(Color::Green);
+    vzlom_title_text.setStyle(Text::Bold);
+    vzlom_title_text.setPosition(140, 40);
+
+    Text vzlom_progress_text;
+    vzlom_progress_text.setFont(font);
+    char loading_progress_str[20] = {};
+    sprintf(loading_progress_str, "%d%% loaded...", loading_progress);
+    vzlom_progress_text.setString(loading_progress_str);
+    vzlom_progress_text.setCharacterSize(28);
+    vzlom_progress_text.setFillColor(Color::Green);
+    vzlom_progress_text.setStyle(Text::Bold);
+    vzlom_progress_text.setPosition(170, 400);
+
+    Text cracked_title_text;
+    cracked_title_text.setFont(font);
+    cracked_title_text.setString("acess granted!!!");
+    cracked_title_text.setCharacterSize(28);
+    cracked_title_text.setFillColor(Color::Magenta);
+    cracked_title_text.setStyle(Text::Bold);
+    cracked_title_text.setPosition(130, 70);
+
+    Music loading_music;
+    loading_music.openFromFile("./audio/loading.wav");
+
+    Music cracked_music;
+    cracked_music.openFromFile("./audio/cracked.wav");
 
     Image background_image;
     background_image.loadFromFile("./images/background.jpg");
@@ -23,6 +56,12 @@ int main()
     Image bin_image;
     bin_image.loadFromFile("./images/binary.jpeg");
 
+    Image cracked_image;
+    cracked_image.loadFromFile("./images/cracked.jpeg");
+
+    Image hacker_image;
+    hacker_image.loadFromFile("./images/hacker.jpeg");
+
     Texture background_texture;
     background_texture.loadFromImage(background_image);
 
@@ -31,6 +70,12 @@ int main()
 
     Texture bin_texture;
     bin_texture.loadFromImage(bin_image);
+
+    Texture cracked_texture;
+    cracked_texture.loadFromImage(cracked_image);
+
+    Texture hacker_texture;
+    hacker_texture.loadFromImage(hacker_image);
 
     Sprite background_sprite;
     background_sprite.setTexture(background_texture);
@@ -44,8 +89,17 @@ int main()
     bin_sprite.setTexture(bin_texture);
     bin_sprite.setPosition(0, 0);
 
+    Sprite cracked_sprite;
+    cracked_sprite.setTexture(cracked_texture);
+    cracked_sprite.setPosition(0, 0);
+
+    Sprite hacker_sprite;
+    hacker_sprite.setTexture(hacker_texture);
+    hacker_sprite.setPosition(105, 0);
+
     Vector2f background_targetSize(540.0f, 480.0f);
     Vector2f boom_targetSize(40.0f, 60.0f);
+    Vector2f hacker_targetSize(350.0f, 180.0f);
 
     background_sprite.setScale( background_targetSize.x / background_sprite.getLocalBounds().width,
                                 background_targetSize.y / background_sprite.getLocalBounds().height);
@@ -56,12 +110,17 @@ int main()
     bin_sprite.setScale( background_targetSize.x / bin_sprite.getLocalBounds().width,
                          background_targetSize.y / bin_sprite.getLocalBounds().height);
 
-    background_sprite.setColor(Color(255, 255, 255, 127));
+    cracked_sprite.setScale( background_targetSize.x / cracked_sprite.getLocalBounds().width,
+                             background_targetSize.y / cracked_sprite.getLocalBounds().height);
+
+    hacker_sprite.setScale( hacker_targetSize.x / hacker_sprite.getLocalBounds().width,
+                            hacker_targetSize.y / hacker_sprite.getLocalBounds().height);
+
+    // background_sprite.setColor(Color(255, 255, 255, 127));
     bin_sprite.setColor(Color(255, 255, 255, 75));
+    hacker_sprite.setColor(Color(255, 255, 255, 50));
 
     window.draw(background_sprite);
-    window.draw(boom_sprite);
-    window.draw(bin_sprite);
 
     int is_boom = 0;
 
@@ -70,10 +129,24 @@ int main()
         window.clear();
         window.draw(background_sprite);
 
-        if (is_boom)
+        if (is_boom && loading_progress <= 100)
         {
             window.draw(boom_sprite);
             window.draw(bin_sprite);
+            window.draw(vzlom_title_text);
+
+            sprintf(loading_progress_str, "%d%% cracked...", ++loading_progress);
+            vzlom_progress_text.setString(loading_progress_str);
+            window.draw(vzlom_progress_text);
+
+            sleep(milliseconds(155));
+        }
+
+        if (loading_progress > 100)
+        {
+            window.draw(cracked_sprite);
+            window.draw(hacker_sprite);
+            window.draw(cracked_title_text);
         }
 
         Event event;
@@ -88,8 +161,7 @@ int main()
             case Event::KeyPressed:
                 if (event.key.code == Keyboard::Enter)
                     is_boom = ~is_boom;
-                    is_boom ? music.play() : music.stop();
-
+                    is_boom ? loading_music.play() : loading_music.stop();
                 break;
 
 //             case Event::KeyReleased:
@@ -100,6 +172,15 @@ int main()
             default:
                 break;
             }
+        }
+
+        if (loading_progress == 101)
+        {
+            loading_music.stop();
+            cracked_music.play();
+
+            loading_progress++;
+            sleep(milliseconds(1500));
         }
 
         window.display();
