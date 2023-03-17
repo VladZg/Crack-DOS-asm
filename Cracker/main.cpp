@@ -1,18 +1,26 @@
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
-#include <time.h>
-#include <cassert>
+#include "./AppConfig.h"
+#include <stdlib.h>
+#include "./Include/AppUtils.h"
+#include "./Include/CrackUtils.h"
 
 using namespace sf;
 
-Sprite LoadBackgroundImage(Window window, char* filename, Sprite* sprite);
-int CrackProgramm(const char* filename);
+// Sprite LoadBackgroundImage(Window window, char* filename, Sprite* sprite);
 
 int loading_progress = 0;
 int glasses_y_position = 0;
 int glasses_final_position = 215;
 
+#define MAX_FILE_LEN 4096
+
 int main()
+{
+    StartApp(INP_FILENAME, OUT_FILENAME);
+
+    return 0;
+}
+
+int StartApp(const char* inp_filename, const char* out_filename)
 {
     RenderWindow window(sf::VideoMode(540, 480), "AbObA TiMaSoK Cracker! (He-He)");
 
@@ -180,7 +188,7 @@ int main()
             case Event::KeyPressed:
                 if (event.key.code == Keyboard::Enter && loading_progress <= 100)
                 {
-                    CrackProgramm("./Hack.com");
+                    CrackProgramm(inp_filename, out_filename);
                     is_boom = ~is_boom;
                     is_boom ? loading_music.play() : loading_music.stop();
                 }
@@ -223,16 +231,43 @@ int main()
         window.display();
     }
 
-    return 0;
+    return 1;
 }
 
-int CrackProgramm(const char* filename)
+int CrackProgramm(const char* inp_filename, const char* out_filename)
 {
-    assert(filename != nullptr);
-    FILE* file = fopen(filename, "w+");
-    assert(file != nullptr);
+    assert(inp_filename != nullptr);
+    assert(out_filename != nullptr);
 
-    fprintf(stdout, "CRACKED!\n");
+    FILE* inp_file = fopen(inp_filename, "rb");
+    assert(inp_file != nullptr);
+    char* code = (char*) calloc(MAX_FILE_LEN, sizeof(char));
+    assert(code != nullptr);
+    int file_len = ReadFile(inp_file, &code);
+    fclose(inp_file);
+
+    code[0x0000095D] = 0x13;    // подмена адреса перехода
+
+    FILE* out_file = fopen(out_filename, "wb");
+    assert(out_file != nullptr);
+    fwrite(code, sizeof(char), file_len, out_file);
+    fclose(out_file);
+    free(code);
+
+    fprintf(stdout, "%s CRACKED!\n New file \"%s\" with cracked code created\n", inp_filename, out_filename);
 
     return 1;
+}
+
+int ReadFile(FILE* file, char** buf)
+{
+    assert(buf != nullptr);
+    assert(*buf != nullptr);
+    assert(file != nullptr);
+
+    fseek(file, 0L, SEEK_END);
+    int file_len = ftell(file);
+    fseek(file, 0L, SEEK_SET);
+
+    return fread(*buf, sizeof(char), file_len, file);
 }
