@@ -9,6 +9,6 @@
 #define MAX_FILE_LEN 4096
 
 int ReadFile(FILE* file, char** buf);
-int CrackProgramm(const char* inp_filename, const char* out_filename);
+int CrackProgramm(const char* inp_filename, const char* out_filename, int mode);
 
 #endif

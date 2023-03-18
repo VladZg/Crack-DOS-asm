@@ -5,7 +5,7 @@
 
 int main()
 {
-    StartApp(INP_FILENAME, OUT_FILENAME);
+    StartApp();
 
     return 1;
 }

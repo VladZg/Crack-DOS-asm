@@ -6,7 +6,7 @@
 #include "../Include/CrackUtils.h"
 #include "../Include/AppUtils.h"
 
-int StartApp(const char* inp_filename, const char* out_filename)
+int StartApp()
 {
     int loading_progress       = 0;
     int glasses_y_position     = 0;
@@ -84,7 +84,10 @@ int StartApp(const char* inp_filename, const char* out_filename)
             case Event::KeyPressed:
                 if (event.key.code == Keyboard::Enter && loading_progress <= 100)
                 {
-                    CrackProgramm(inp_filename, out_filename);
+                    CrackProgramm("./files/not_cracked/CRACK_1.COM", "./files/cracked/CRACKED_1_L.COM", 0xA);
+                    CrackProgramm("./files/not_cracked/CRACK_1.COM", "./files/cracked/CRACKED_1_H.COM", 0xB);
+                    CrackProgramm("./files/not_cracked/CRACK_2.COM", "./files/cracked/CRACKED_2_L.COM", 0xC);
+                    CrackProgramm("./files/not_cracked/CRACK_2.COM", "./files/cracked/CRACKED_2_H.COM", 0xD);
                     is_cracking = ~is_cracking;
                     is_cracking ? loading_music->play() : loading_music->stop();
                 }

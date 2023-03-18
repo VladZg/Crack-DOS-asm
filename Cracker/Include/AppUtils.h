@@ -14,6 +14,6 @@ Text* CreateTextObject(Font* font, const char* msg, int fontsize, Color color, T
 Sprite* CreateSpriteObject(const char* source, float x_position, float y_position);
 int StretchSprite(Sprite* sprite, float width, float height);
 
-int StartApp(const char* inp_filename, const char* out_filename);
+int StartApp();
 
 #endif
