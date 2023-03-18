@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include "../Include/CrackUtils.h"
 
-int CrackProgramm(const char* inp_filename, const char* out_filename)
+int CrackProgramm(const char* inp_filename, const char* out_filename, int mode)
 {
     assert(inp_filename != nullptr);
     assert(out_filename != nullptr);
@@ -17,7 +17,31 @@ int CrackProgramm(const char* inp_filename, const char* out_filename)
     int file_len = ReadFile(inp_file, &code);
     fclose(inp_file);
 
-    code[0x0000095D] = 0x13;    // подмена адреса перехода
+    switch (mode)
+    {
+                                        // basic crack 1:
+                                        // - найти пароль в коде программы: "ak47"
+                                        // - ввести пароль с таким же хешом (311): "DEDj"
+
+        case 0xA:                         
+            code[0x0000095D] = 0x01;    // light crack 1: подмена адреса перехода на начало функции, печатающей "access granted" в условном джампе
+            break;
+
+        case 0xB:
+            code[0x00000953] = 0xF3;    // hard crack 1: подмена адреса строки для функции, считающей хеш так, чтобы она дважды считала хэш одной и той же строки
+            break;
+
+                                        // basic crack 2:
+                                        // - найти пароль в коде программы: "huysosi"
+                                        // - найден баг: при введении 7 символов + Enter программа даёт доступ
+
+        case 0xC:                       // light crack 2: 
+            // code[0x00000906] = 0x07;
+            break;
+
+        case 0xD:                       //
+            break;
+    }
 
     FILE* out_file = fopen(out_filename, "wb");
     assert(out_file != nullptr);
