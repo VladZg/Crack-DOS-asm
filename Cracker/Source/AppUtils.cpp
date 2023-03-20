@@ -6,8 +6,14 @@
 #include "../Include/CrackUtils.h"
 #include "../Include/AppUtils.h"
 
-int StartApp()
+int StartApp(int file_hash, const char* filename)
 {
+    if (CheckFileHash(filename) != file_hash)
+    {
+        fprintf(stderr, "incorrect file!\n");
+        return 0;
+    }
+
     int loading_progress       = 0;
     int glasses_y_position     = 0;
     int glasses_final_position = 215;
@@ -84,10 +90,10 @@ int StartApp()
             case Event::KeyPressed:
                 if (event.key.code == Keyboard::Enter && loading_progress <= 100)
                 {
-                    CrackProgramm("./files/not_cracked/CRACK_1.COM", "./files/cracked/CRACKED_1_1.COM", 0xA);
-                    CrackProgramm("./files/not_cracked/CRACK_1.COM", "./files/cracked/CRACKED_1_2.COM", 0xB);
-                    CrackProgramm("./files/not_cracked/CRACK_1.COM", "./files/cracked/CRACKED_1_3.COM", 0xC);
-                    CrackProgramm("./files/not_cracked/CRACK_1.COM", "./files/cracked/CRACKED_1_4.COM", 0xD);
+                    CrackProgramm(filename, OUT_FILEPATH "/CRACKED_1_1.COM", 0xA);
+                    CrackProgramm(filename, OUT_FILEPATH "/CRACKED_1_2.COM", 0xB);
+                    CrackProgramm(filename, OUT_FILEPATH "/CRACKED_1_3.COM", 0xC);
+                    CrackProgramm(filename, OUT_FILEPATH "/CRACKED_1_4.COM", 0xD);
                     // CrackProgramm("./files/not_cracked/CRACK_2.COM", "./files/cracked/CRACKED_2_L.COM", 0xC);
                     // CrackProgramm("./files/not_cracked/CRACK_2.COM", "./files/cracked/CRACKED_2_H.COM", 0xD);
                     is_cracking = ~is_cracking;

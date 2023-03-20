@@ -17,7 +17,7 @@ int CrackProgramm(const char* inp_filename, const char* out_filename, int mode)
     int file_len = ReadFile(inp_file, &code);
     fclose(inp_file);
 
-    PatchFile(code, mode);
+    PatchCode(code, mode);
 
     FILE* out_file = fopen(out_filename, "wb");
     assert(out_file != nullptr);
@@ -30,7 +30,28 @@ int CrackProgramm(const char* inp_filename, const char* out_filename, int mode)
     return 1;
 }
 
-int PatchFile(char* code, int mode)
+int CheckFileHash(const char* filename)
+{
+    assert(filename != nullptr);
+
+    FILE* file = fopen(filename, "rb");
+    assert(file != nullptr);
+    char* code = (char*) calloc(MAX_FILE_LEN, sizeof(char));
+    assert(code != nullptr);
+    int file_len = ReadFile(file, &code);
+    fclose(file);
+
+    int file_hash = 0;
+
+    for (int i = 0; i < file_len; i++)
+        file_hash += int(code[i]);
+
+    // printf("hash: %d\n", file_hash);
+
+    return file_hash;
+}
+
+int PatchCode(char* code, int mode)
 {
     assert(code != nullptr);
 

@@ -1,7 +1,7 @@
 #ifndef APP_CONFIG_H
 #define APP_CONFIG_H
 
-// #define INP_FILENAME "./files/not_cracked/CRACK_1.COM"
-// #define OUT_FILENAME "./files/cracked/CRACKED_1_L.COM"
+#define INP_FILEPATH "./files/not_cracked/"
+#define OUT_FILEPATH "./files/cracked/"
 
 #endif

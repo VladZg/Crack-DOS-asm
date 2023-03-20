@@ -5,7 +5,8 @@
 
 int main()
 {
-    StartApp();
+    int file_hash = CheckFileHash(INP_FILEPATH "CRACK_1.COM");
+    exit(StartApp(file_hash, INP_FILEPATH "CRACK_1.COM"));
 
     return 1;
 }
