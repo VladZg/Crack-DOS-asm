@@ -84,10 +84,12 @@ int StartApp()
             case Event::KeyPressed:
                 if (event.key.code == Keyboard::Enter && loading_progress <= 100)
                 {
-                    CrackProgramm("./files/not_cracked/CRACK_1.COM", "./files/cracked/CRACKED_1_L.COM", 0xA);
-                    CrackProgramm("./files/not_cracked/CRACK_1.COM", "./files/cracked/CRACKED_1_H.COM", 0xB);
-                    CrackProgramm("./files/not_cracked/CRACK_2.COM", "./files/cracked/CRACKED_2_L.COM", 0xC);
-                    CrackProgramm("./files/not_cracked/CRACK_2.COM", "./files/cracked/CRACKED_2_H.COM", 0xD);
+                    CrackProgramm("./files/not_cracked/CRACK_1.COM", "./files/cracked/CRACKED_1_1.COM", 0xA);
+                    CrackProgramm("./files/not_cracked/CRACK_1.COM", "./files/cracked/CRACKED_1_2.COM", 0xB);
+                    CrackProgramm("./files/not_cracked/CRACK_1.COM", "./files/cracked/CRACKED_1_3.COM", 0xC);
+                    CrackProgramm("./files/not_cracked/CRACK_1.COM", "./files/cracked/CRACKED_1_4.COM", 0xD);
+                    // CrackProgramm("./files/not_cracked/CRACK_2.COM", "./files/cracked/CRACKED_2_L.COM", 0xC);
+                    // CrackProgramm("./files/not_cracked/CRACK_2.COM", "./files/cracked/CRACKED_2_H.COM", 0xD);
                     is_cracking = ~is_cracking;
                     is_cracking ? loading_music->play() : loading_music->stop();
                 }

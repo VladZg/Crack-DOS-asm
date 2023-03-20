@@ -12,5 +12,5 @@ link:
 run:
 	./app
 
-clear:
+clean:
 	rm -r -f ./Obj
