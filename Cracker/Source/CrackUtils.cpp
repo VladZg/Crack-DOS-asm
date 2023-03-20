@@ -31,15 +31,28 @@ int CrackProgramm(const char* inp_filename, const char* out_filename, int mode)
             code[0x00000953] = 0xF3;    // hard crack 1: подмена адреса строки для функции, считающей хеш так, чтобы она дважды считала хэш одной и той же строки
             break;
 
+        case 0xC:
+        {
+            code[0x00000897] = 0x68;    // crack 3: подмена адреса возврата из функции, проверяющей хэш введённого пароля (по адресу cs:0997)
+            code[0x00000898] = 0x5F;    // push 0A5F <-- адрес начала функции, печатающей ACCESS GRANTED
+            code[0x00000899] = 0x0A;
+            break;
+        }
+
+        case 0xD:
+        {                               // crack 4: переписывание пароля на "Vlad"
+            ((int*)((code + 0x000008F3)))[0] = 0x64616C56;
+            break;
+        }
                                         // basic crack 2:
                                         // - найти пароль в коде программы: "huysosi"
                                         // - найден баг: при введении 7 символов + Enter программа даёт доступ
 
-        case 0xC:                       // light crack 2: 
+        case 0xE:                       // light crack 2: 
             // code[0x00000906] = 0x07;
             break;
 
-        case 0xD:                       //
+        case 0xF:                       //
             break;
     }
 
