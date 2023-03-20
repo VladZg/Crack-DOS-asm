@@ -17,13 +17,29 @@ int CrackProgramm(const char* inp_filename, const char* out_filename, int mode)
     int file_len = ReadFile(inp_file, &code);
     fclose(inp_file);
 
-    switch (mode)
-    {
-                                        // basic crack 1:
-                                        // - найти пароль в коде программы: "ak47"
-                                        // - ввести пароль с таким же хешом (311): "DEDj"
+    PatchFile(code, mode);
 
-        case 0xA:                         
+    FILE* out_file = fopen(out_filename, "wb");
+    assert(out_file != nullptr);
+    fwrite(code, sizeof(char), file_len, out_file);
+    fclose(out_file);
+    free(code);
+
+    fprintf(stdout, "%s CRACKED!\n New file \"%s\" with cracked code created\n", inp_filename, out_filename);
+
+    return 1;
+}
+
+int PatchFile(char* code, int mode)
+{
+    assert(code != nullptr);
+
+    switch (mode)
+    {                                   // basic crack 1:
+                                        // - найти пароль в коде программы: "ak47"
+                                        // - ввести пароль с таким же хешом (137h|311d): "DEDj"
+
+        case 0xA:
             code[0x0000095D] = 0x01;    // light crack 1: подмена адреса перехода на начало функции, печатающей "access granted" в условном джампе
             break;
 
@@ -40,29 +56,21 @@ int CrackProgramm(const char* inp_filename, const char* out_filename, int mode)
         }
 
         case 0xD:
-        {                               // crack 4: переписывание пароля на "Vlad"
-            ((int*)((code + 0x000008F3)))[0] = 0x64616C56;
+        {                                                   // crack 4: переписывание пароля на "Vlad"
+            ((int*)((code + 0x000008F3)))[0] = 0x64616C56;  // new password: Vlad
             break;
         }
                                         // basic crack 2:
                                         // - найти пароль в коде программы: "huysosi"
                                         // - найден баг: при введении 7 символов + Enter программа даёт доступ
 
-        case 0xE:                       // light crack 2: 
-            // code[0x00000906] = 0x07;
+        case 0xE:                       // light crack 2:
+                                        // code[0x00000906] = 0x07;
             break;
 
         case 0xF:                       //
             break;
     }
-
-    FILE* out_file = fopen(out_filename, "wb");
-    assert(out_file != nullptr);
-    fwrite(code, sizeof(char), file_len, out_file);
-    fclose(out_file);
-    free(code);
-
-    fprintf(stdout, "%s CRACKED!\n New file \"%s\" with cracked code created\n", inp_filename, out_filename);
 
     return 1;
 }

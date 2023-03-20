@@ -10,5 +10,6 @@
 
 int ReadFile(FILE* file, char** buf);
 int CrackProgramm(const char* inp_filename, const char* out_filename, int mode);
+int PatchFile(char* code, int mode);
 
 #endif
